@@ -27,7 +27,6 @@ spec:
       containers:
       - name: service1
         image: robarros/service1:latest
-        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
