@@ -2,7 +2,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: service2
+  name: backend
   namespace: argocd
   finalizers:
     - resources-finalizer.argocd.argoproj.io
@@ -11,7 +11,7 @@ spec:
   source:
     repoURL: https://github.com/robarros/app-frases-python
     targetRevision: HEAD
-    path: service2
+    path: backend
   destination:
     server: https://kubernetes.default.svc
     namespace: frases

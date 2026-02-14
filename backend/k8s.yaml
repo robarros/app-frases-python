@@ -1,41 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: service2
+  name: backend
   namespace: frases
   labels:
-    app: service2
+    app: backend
     tags.datadoghq.com/env: "dev"
-    tags.datadoghq.com/service: "service2"
-    tags.datadoghq.com/version: "1.1.0"
+    tags.datadoghq.com/service: "backend"
+    tags.datadoghq.com/version: "1.4.0"
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: service2
+      app: backend
   template:
     metadata:
       labels:
-        app: service2
+        app: backend
         tags.datadoghq.com/env: "dev"
-        tags.datadoghq.com/service: "service2"
-        tags.datadoghq.com/version: "1.1.0"
+        tags.datadoghq.com/service: "backend"
+        tags.datadoghq.com/version: "1.4.0"
       annotations:
         admission.datadoghq.com/enabled: "true"
         admission.datadoghq.com/python-lib.version: "latest"
     spec:
       containers:
-      - name: service2
-        image: robarros/service2:latest
+      - name: backend
+        image: robarros/service:latest
         ports:
         - containerPort: 8080
         env:
         - name: DD_SERVICE
-          value: "service2"
+          value: "backend"
         - name: DD_ENV
           value: "dev"
         - name: DD_VERSION
-          value: "1.1.0"
+          value: "1.4.0"
         - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
           value: "true"
         # - name: DD_LOGS_INJECTION
@@ -54,12 +54,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: service2
+  name: svc-backend
   namespace: frases
 spec:
   type: ClusterIP
   selector:
-    app: service2
+    app: backend
   ports:
   - protocol: TCP
     port: 8080
