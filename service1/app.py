@@ -26,3 +26,8 @@ async def frases():
             return response.json()
     except httpx.HTTPError as exc:
         raise HTTPException(status_code=502, detail="falha ao buscar frases") from exc
+
+
+@app.get("/error")
+def erro500():
+    raise RuntimeError("erro intencional para teste")
