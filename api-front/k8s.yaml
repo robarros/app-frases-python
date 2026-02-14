@@ -45,8 +45,8 @@ spec:
           value: "true"
         - name: DD_TRACE_ENABLED
           value: "true"
-        # - name: DD_TRACE_SAMPLE_RATE
-        #   value: "1"
+        - name: DD_TRACE_SAMPLE_RATE
+          value: "1"
         # - name: DD_PROFILING_ENABLED
         #   value: "true"
         # - name: DD_RUNTIME_METRICS_ENABLED
