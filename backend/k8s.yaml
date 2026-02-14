@@ -20,11 +20,9 @@ spec:
         tags.datadoghq.com/env: "dev"
         tags.datadoghq.com/service: "backend"
         tags.datadoghq.com/version: "1.4.0"
+      annotations:
         admission.datadoghq.com/enabled: "true"
         admission.datadoghq.com/python-lib.version: "latest"
-      # annotations:
-      #   admission.datadoghq.com/enabled: "true"
-      #   admission.datadoghq.com/python-lib.version: "latest"
     spec:
       containers:
       - name: backend
