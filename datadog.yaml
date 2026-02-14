@@ -1,0 +1,62 @@
+---
+kind: "DatadogAgent"
+apiVersion: "datadoghq.com/v2alpha1"
+metadata:
+  name: "datadog"
+  namespace: "datadog"
+spec:
+  global:
+    clusterName: "k0s-cluster"
+    site: "us5.datadoghq.com"
+    credentials:
+      apiSecret:
+        secretName: "datadog-secret"
+        keyName: "api-key"
+    tags:
+      - "env:dev"
+  features:
+    clusterChecks:
+      enabled: true
+    orchestratorExplorer:
+      enabled: true
+    admissionController:
+      enabled: true
+      mutateUnlabelled: false
+    logCollection:
+      enabled: false
+      containerCollectAll: false
+    apm:
+      instrumentation:
+        enabled: true
+        targets:
+          - name: "default-target"
+            ddTraceVersions:
+              java: "1"
+              python: "4"
+              js: "5"
+              php: "1"
+              dotnet: "3"
+              ruby: "2"
+    # otlp:
+    #   receiver:
+    #     protocols:
+    #       grpc:
+    #         enabled: true
+    #         endpoint: "0.0.0.0:4317"
+    #       http:
+    #         enabled: true
+    #         endpoint: "0.0.0.0:4318"
+    usm:
+      enabled: true
+  override:  # for k0s, to allow the agent to run with the default seccomp profile
+    nodeAgent:
+      volumes:
+        - name: seccomp-root
+          hostPath:
+            path: /var/lib/k0s/kubelet/seccomp
+
+
+# helm repo add datadog https://helm.datadoghq.com
+# helm upgrade --install datadog-operator datadog/datadog-operator -n datadog --create-namespace
+# kubectl create secret generic datadog-secret --from-literal api-key=REDACTED -n datadog
+# kubectl apply -f ./k8s/datadog.yaml

@@ -94,10 +94,10 @@ metadata:
     kubernetes.io/ingress.class: "nginx"
     external-dns.alpha.kubernetes.io/hostname: frases.virtualti.net
     external-dns.alpha.kubernetes.io/target: 150.136.247.86
-    nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
-    nginx.ingress.kubernetes.io/auth-tls-secret: frases/ca-secret
-    nginx.ingress.kubernetes.io/auth-tls-verify-client: "on"
-    nginx.ingress.kubernetes.io/auth-tls-verify-depth: "1"
+    # nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
+    # nginx.ingress.kubernetes.io/auth-tls-secret: frases/ca-secret
+    # nginx.ingress.kubernetes.io/auth-tls-verify-client: "on"
+    # nginx.ingress.kubernetes.io/auth-tls-verify-depth: "1"
 spec:
   ingressClassName: nginx
   tls:
