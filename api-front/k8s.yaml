@@ -9,7 +9,7 @@ metadata:
     tags.datadoghq.com/service: "api-front"
     tags.datadoghq.com/version: "1.4.0"
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: api-front

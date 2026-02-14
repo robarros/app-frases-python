@@ -9,7 +9,7 @@ metadata:
     tags.datadoghq.com/service: "backend"
     tags.datadoghq.com/version: "1.4.0"
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: backend
