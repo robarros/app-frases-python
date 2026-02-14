@@ -24,7 +24,7 @@ spec:
       mutateUnlabelled: false
     logCollection:
       enabled: true
-      containerCollectAll: false
+      containerCollectAll: true
     apm:
       instrumentation:
         enabled: true
