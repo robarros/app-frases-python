@@ -26,6 +26,7 @@ spec:
       enabled: true
       containerCollectAll: true
     apm:
+      enabled: true
       instrumentation:
         enabled: true
         targets:
