@@ -7,9 +7,9 @@ metadata:
     app: service1
     tags.datadoghq.com/env: "dev"
     tags.datadoghq.com/service: "service1"
-    tags.datadoghq.com/version: "1.0.0"
+    tags.datadoghq.com/version: "1.2.0"
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: service1
@@ -19,7 +19,7 @@ spec:
         app: service1
         tags.datadoghq.com/env: "dev"
         tags.datadoghq.com/service: "service1"
-        tags.datadoghq.com/version: "1.0.0"
+        tags.datadoghq.com/version: "1.2.0"
       annotations:
         admission.datadoghq.com/enabled: "true"
         admission.datadoghq.com/python-lib.version: "latest"
@@ -38,7 +38,7 @@ spec:
         - name: DD_ENV
           value: "dev"
         - name: DD_VERSION
-          value: "1.0.0"
+          value: "1.2.0"
         # - name: DD_LOGS_INJECTION
         #   value: "true"
         # - name: DD_TRACE_SAMPLE_RATE
