@@ -23,7 +23,7 @@ spec:
       enabled: true
       mutateUnlabelled: false
     logCollection:
-      enabled: false
+      enabled: true
       containerCollectAll: false
     apm:
       instrumentation:

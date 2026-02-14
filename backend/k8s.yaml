@@ -26,7 +26,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: robarros/service2:latest
+        image: robarros/backend:latest
         ports:
         - containerPort: 8080
         env:
