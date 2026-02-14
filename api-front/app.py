@@ -5,14 +5,18 @@ from zoneinfo import ZoneInfo
 
 import httpx
 from fastapi import FastAPI, HTTPException
+from ddtrace import tracer
+import json_log_formatter
 
 app = FastAPI()
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s %(message)s",
-)
+formatter = json_log_formatter.JSONFormatter()
+json_handler = logging.StreamHandler()
+json_handler.setFormatter(formatter)
+
 logger = logging.getLogger("api-front")
+logger.addHandler(json_handler)
+logger.setLevel(logging.INFO)
 
 SERVICE2_URL = os.getenv("SERVICE2_URL", "http://service2:8080/frases")
 BR_TZ = ZoneInfo("America/Sao_Paulo")

@@ -2,15 +2,18 @@ import logging
 
 import httpx
 from fastapi import FastAPI, HTTPException
+from ddtrace import tracer
+import json_log_formatter
 
 app = FastAPI()
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s %(levelname)s %(name)s %(message)s",
-)
+formatter = json_log_formatter.JSONFormatter()
+json_handler = logging.StreamHandler()
+json_handler.setFormatter(formatter)
 
 logger = logging.getLogger("service2")
+logger.addHandler(json_handler)
+logger.setLevel(logging.INFO)
 
 QUOTE_URL = "https://dummyjson.com/quotes/random"
 

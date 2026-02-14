@@ -23,11 +23,10 @@ spec:
       annotations:
         admission.datadoghq.com/enabled: "true"
         admission.datadoghq.com/python-lib.version: "latest"
-        ad.datadoghq.com/api-front.logs: '[{"source":"python","service":"api-front","tags":["env:dev"]}]'
     spec:
       containers:
       - name: api-front
-        image: robarros/api-front:latest 
+        image: robarros/api-front:v1
         ports:
         - containerPort: 8080
         env:
