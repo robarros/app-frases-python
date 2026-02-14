@@ -20,9 +20,11 @@ spec:
         tags.datadoghq.com/env: "dev"
         tags.datadoghq.com/service: "api-front"
         tags.datadoghq.com/version: "1.4.0"
-      annotations:
         admission.datadoghq.com/enabled: "true"
         admission.datadoghq.com/python-lib.version: "latest"
+      # annotations:
+      #   admission.datadoghq.com/enabled: "true"
+      #   admission.datadoghq.com/python-lib.version: "latest"
     spec:
       containers:
       - name: api-front
