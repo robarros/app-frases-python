@@ -51,7 +51,7 @@ export default function () {
     console.log(`[${new Date().toISOString()}] ${endpoint} - Status: ${response.status} - Tempo: ${response.timings.duration.toFixed(2)}ms`);
 
     check(response, {
-        'status é 200 ou 500': (r) => r.status === 200 || r.status === 500,
+        'status code 200 ou 500': (r) => r.status === 200 || r.status === 500,
         'tempo de resposta < 1s': (r) => r.timings.duration < 1000,
     });
 }
