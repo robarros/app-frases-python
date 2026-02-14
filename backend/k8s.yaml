@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: robarros/backend:v1
+        image: robarros/backend:v2
         ports:
         - containerPort: 8080
         env:
@@ -40,6 +40,8 @@ spec:
         - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
           value: "true"
         - name: DD_LOGS_INJECTION
+          value: "true"
+        - name: DD_TRACE_ENABLED
           value: "true"
         # - name: DD_TRACE_SAMPLE_RATE
         #   value: "1"
