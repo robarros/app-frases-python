@@ -15,7 +15,7 @@ export const options = {
             executor: 'constant-arrival-rate',
             rate: 10, // 10 requisições por segundo
             timeUnit: '1s', // tempo em que a taxa é aplicada
-            duration: '20s', // 5 minutos
+            duration: '5m', // 5 minutos
             preAllocatedVUs: 5, // VUs pré-alocados
             maxVUs: 100, // Máximo de VUs se necessário
         },
