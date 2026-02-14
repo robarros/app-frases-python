@@ -29,7 +29,7 @@ export const options = {
 const endpoints = [
     'https://frases.virtualti.net',
     'https://frases.virtualti.net/frases',
-    'https://frases.virtualti.net/error',
+    //'https://frases.virtualti.net/error',
 ];
 
 export default function () {
