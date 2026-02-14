@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service2
+  namespace: frases
+  labels:
+    app: service2
+    tags.datadoghq.com/env: "dev"
+    tags.datadoghq.com/service: "service2"
+    tags.datadoghq.com/version: "1.0.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service2
+  template:
+    metadata:
+      labels:
+        app: service2
+        tags.datadoghq.com/env: "dev"
+        tags.datadoghq.com/service: "service2"
+        tags.datadoghq.com/version: "1.0.0"
+      annotations:
+        admission.datadoghq.com/enabled: "true"
+        admission.datadoghq.com/python-lib.version: "latest"
+    spec:
+      containers:
+      - name: service2
+        image: robarros/service2:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DD_SERVICE
+          value: "service2"
+        - name: DD_ENV
+          value: "dev"
+        - name: DD_VERSION
+          value: "1.0.0"
+        # - name: DD_LOGS_INJECTION
+        #   value: "true"
+        # - name: DD_TRACE_SAMPLE_RATE
+        #   value: "1"
+        # - name: DD_PROFILING_ENABLED
+        #   value: "true"
+        # - name: DD_RUNTIME_METRICS_ENABLED
+        #   value: "true"
+        # - name: DD_AGENT_HOST
+        #   valueFrom:
+        #     fieldRef:
+        #       fieldPath: status.hostIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service2
+  namespace: frases
+spec:
+  type: ClusterIP
+  selector:
+    app: service2
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080

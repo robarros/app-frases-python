@@ -1,0 +1,12 @@
+services:
+  service1:
+    build: ./service1
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVICE2_URL=http://service2:8080/frases
+    depends_on:
+      - service2
+
+  service2:
+    build: ./service2

@@ -1,0 +1,112 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service1
+  namespace: frases
+  labels:
+    app: service1
+    tags.datadoghq.com/env: "dev"
+    tags.datadoghq.com/service: "service1"
+    tags.datadoghq.com/version: "1.0.0"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service1
+  template:
+    metadata:
+      labels:
+        app: service1
+        tags.datadoghq.com/env: "dev"
+        tags.datadoghq.com/service: "service1"
+        tags.datadoghq.com/version: "1.0.0"
+      annotations:
+        admission.datadoghq.com/enabled: "true"
+        admission.datadoghq.com/python-lib.version: "latest"
+    spec:
+      containers:
+      - name: service1
+        image: robarros/service1:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SERVICE2_URL
+          value: "http://service2:8080/frases"
+        - name: DD_SERVICE
+          value: "service1"
+        - name: DD_ENV
+          value: "dev"
+        - name: DD_VERSION
+          value: "1.0.0"
+        # - name: DD_LOGS_INJECTION
+        #   value: "true"
+        # - name: DD_TRACE_SAMPLE_RATE
+        #   value: "1"
+        # - name: DD_PROFILING_ENABLED
+        #   value: "true"
+        # - name: DD_RUNTIME_METRICS_ENABLED
+        #   value: "true"
+        # - name: DD_AGENT_HOST
+        #   valueFrom:
+        #     fieldRef:
+        #       fieldPath: status.hostIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service1
+  namespace: frases
+spec:
+  type: ClusterIP
+  selector:
+    app: service1
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: frases-virtualti-net-cert
+  namespace: frases
+spec:
+  secretName: frases-virtualti-net-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "frases.virtualti.net"
+  dnsNames:
+    - "frases.virtualti.net"
+  privateKey:
+    rotationPolicy: Never
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: frases-ingress
+  namespace: frases
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    external-dns.alpha.kubernetes.io/hostname: frases.virtualti.net
+    external-dns.alpha.kubernetes.io/target: 150.136.247.86
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - frases.virtualti.net
+      secretName: frases-virtualti-net-tls
+  rules:
+    - host: frases.virtualti.net
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: service1
+                port:
+                  number: 8080
