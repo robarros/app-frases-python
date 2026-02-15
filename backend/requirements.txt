@@ -1,4 +1,5 @@
 fastapi==0.115.0
 httpx==0.27.2
 uvicorn==0.30.6
-ddtrace
+ddtrace==2.8.1
+python-json-logger==2.0.7

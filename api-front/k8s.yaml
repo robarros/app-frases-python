@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: api-front
-        image: robarros/api-front:v3
+        image: robarros/api-front:v4
         ports:
         - containerPort: 8080
         env:
@@ -47,8 +47,8 @@ spec:
           value: "true"
         - name: DD_TRACE_SAMPLE_RATE
           value: "1"
-        - name: DD_TRACE_STARTUP_LOGS
-          value: "true"
+        # - name: DD_TRACE_STARTUP_LOGS
+        #   value: "true"
         # - name: DD_PROFILING_ENABLED
         #   value: "true"
         # - name: DD_RUNTIME_METRICS_ENABLED
