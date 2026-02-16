@@ -7,7 +7,7 @@ metadata:
     app: backend
     tags.datadoghq.com/env: "dev"
     tags.datadoghq.com/service: "backend"
-    tags.datadoghq.com/version: "1.4.0"
+    tags.datadoghq.com/version: "1.5.0"
 spec:
   replicas: 1
   selector:
@@ -19,7 +19,7 @@ spec:
         app: backend
         tags.datadoghq.com/env: "dev"
         tags.datadoghq.com/service: "backend"
-        tags.datadoghq.com/version: "1.4.0"
+        tags.datadoghq.com/version: "1.5.0"
       annotations:
         admission.datadoghq.com/enabled: "true"
         admission.datadoghq.com/python-lib.version: "latest"
@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: robarros/backend:v4
+        image: robarros/backend:v5
         ports:
         - containerPort: 8080
         env:
@@ -36,7 +36,7 @@ spec:
         - name: DD_ENV
           value: "dev"
         - name: DD_VERSION
-          value: "1.4.0"
+          value: "1.5.0"
         - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
           value: "true"
         - name: DD_LOGS_INJECTION
