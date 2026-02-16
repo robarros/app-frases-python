@@ -13,9 +13,9 @@ export const options = {
     scenarios: {
         constant_rate: {
             executor: 'constant-arrival-rate',
-            rate: 5, // 10 requisições por segundo
+            rate: 10, // 10 requisições por segundo
             timeUnit: '1s', // tempo em que a taxa é aplicada
-            duration: '50m', // 5 minutos
+            duration: '50m', // 50 minutos
             preAllocatedVUs: 5, // VUs pré-alocados
             maxVUs: 100, // Máximo de VUs se necessário
         },
