@@ -11,6 +11,32 @@ app = FastAPI()
 # CONFIGURAÇÃO DE LOG JSON
 # =========================
 
+# Filtro customizado para injeção de trace do Datadog
+class DatadogTraceFilter(logging.Filter):
+    def filter(self, record):
+        try:
+            from ddtrace import tracer
+            span = tracer.current_span()
+            if span:
+                record.dd_trace_id = span.trace_id
+                record.dd_span_id = span.span_id
+                record.dd_service = os.getenv('DD_SERVICE', '')
+                record.dd_env = os.getenv('DD_ENV', '')
+                record.dd_version = os.getenv('DD_VERSION', '')
+            else:
+                record.dd_trace_id = 0
+                record.dd_span_id = 0
+                record.dd_service = os.getenv('DD_SERVICE', '')
+                record.dd_env = os.getenv('DD_ENV', '')
+                record.dd_version = os.getenv('DD_VERSION', '')
+        except Exception:
+            record.dd_trace_id = 0
+            record.dd_span_id = 0
+            record.dd_service = os.getenv('DD_SERVICE', '')
+            record.dd_env = os.getenv('DD_ENV', '')
+            record.dd_version = os.getenv('DD_VERSION', '')
+        return True
+
 logger = logging.getLogger("service2")
 logger.setLevel(logging.INFO)
 
@@ -18,10 +44,11 @@ logHandler = logging.StreamHandler(sys.stdout)
 
 formatter = jsonlogger.JsonFormatter(
     "%(asctime)s %(levelname)s %(name)s %(message)s "
-    "%(dd.trace_id)s %(dd.span_id)s %(dd.service)s %(dd.env)s %(dd.version)s"
+    "%(dd_trace_id)s %(dd_span_id)s %(dd_service)s %(dd_env)s %(dd_version)s"
 )
 
 logHandler.setFormatter(formatter)
+logHandler.addFilter(DatadogTraceFilter())
 logger.addHandler(logHandler)
 logger.propagate = False
 
