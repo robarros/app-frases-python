@@ -33,12 +33,18 @@ spec:
         env:
         - name: SERVICE2_URL
           value: "http://svc-backend:8080/frases"
-        - name: DD_SERVICE
-          value: "api-front"
         - name: DD_ENV
-          value: "dev"
-        - name: DD_VERSION
-          value: "1.5.0"
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/env']
+        - name: DD_SERVICE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/service']
+        - name: DD_VERSION 
+          valueFrom: 
+            fieldRef: 
+              fieldPath: metadata.labels['tags.datadoghq.com/version']
         - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
           value: "true"
         - name: DD_LOGS_INJECTION
