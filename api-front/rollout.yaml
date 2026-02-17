@@ -168,6 +168,29 @@ spec:
 apiVersion: networking.istio.io/v1beta1
 kind: VirtualService
 metadata:
+  name: api-front-vs
+  namespace: frases
+spec:
+  hosts:
+  - api-front
+  http:
+  - name: primary
+    route:
+    - destination:
+        host: svc-api-front-stable.frases.svc.cluster.local
+        port:
+          number: 8080
+      weight: 100
+    - destination:
+        host: svc-api-front-canary.frases.svc.cluster.local
+        port:
+          number: 8080
+      weight: 0
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
   name: frases-vs
   namespace: frases
 spec:
