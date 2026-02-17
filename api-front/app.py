@@ -77,7 +77,7 @@ async def frases():
         async with httpx.AsyncClient(timeout=5.0) as client:
             response = await client.get(SERVICE2_URL)
             response.raise_for_status()
-            return {"frases": response.json(), "version": VERSION}
+            return response.json()
 
     except httpx.HTTPError:
         logger.exception("Erro ao buscar frases do service2")
