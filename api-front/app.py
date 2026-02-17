@@ -58,6 +58,7 @@ logger.propagate = False
 # =========================
 
 SERVICE2_URL = os.getenv("SERVICE2_URL", "http://service2:8080/frases")
+VERSION = os.getenv("VERSION", "1.0.0")
 BR_TZ = ZoneInfo("America/Sao_Paulo")
 
 
@@ -65,7 +66,7 @@ BR_TZ = ZoneInfo("America/Sao_Paulo")
 def root():
     now = datetime.now(BR_TZ).isoformat()
     logger.info("GET / root chamada")
-    return {"mensagem": "ola mundo", "hora_brasil": now}
+    return {"mensagem": "ola mundo", "hora_brasil": now, "version": VERSION}
 
 
 @app.get("/frases")
@@ -76,7 +77,7 @@ async def frases():
         async with httpx.AsyncClient(timeout=5.0) as client:
             response = await client.get(SERVICE2_URL)
             response.raise_for_status()
-            return response.json()
+            return {"frases": response.json(), "version": VERSION}
 
     except httpx.HTTPError:
         logger.exception("Erro ao buscar frases do service2")

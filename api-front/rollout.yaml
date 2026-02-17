@@ -1,0 +1,188 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: api-front
+  namespace: frases
+  labels:
+    app: api-front
+    tags.datadoghq.com/env: "dev"
+    tags.datadoghq.com/service: "api-front"
+    tags.datadoghq.com/version: "1.5.0"
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: api-front
+  template:
+    metadata:
+      labels:
+        app: api-front
+        tags.datadoghq.com/env: "dev"
+        tags.datadoghq.com/service: "api-front"
+        tags.datadoghq.com/version: "1.5.0"
+        sidecar.istio.io/inject: "true"
+      annotations:
+        admission.datadoghq.com/enabled: "true"
+        admission.datadoghq.com/python-lib.version: "latest"
+        ad.datadoghq.com/api-front.logs: '[{"source":"python","service":"api-front"}]'
+    spec:
+      containers:
+      - name: api-front
+        image: robarros/api-front:v6
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SERVICE2_URL
+          value: "http://svc-backend-stable:8080/frases"
+        - name: DD_ENV
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/env']
+        - name: DD_SERVICE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/service']
+        - name: DD_VERSION 
+          valueFrom: 
+            fieldRef: 
+              fieldPath: metadata.labels['tags.datadoghq.com/version']
+        - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
+          value: "true"
+        - name: DD_LOGS_INJECTION
+          value: "true"
+        - name: DD_TRACE_ENABLED
+          value: "true"
+        - name: DD_TRACE_STARTUP_LOGS
+          value: "true"
+        - name: DD_PROFILING_ENABLED
+          value: "true"
+        - name: DD_RUNTIME_METRICS_ENABLED
+          value: "true"
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: VERSION
+          valueFrom: 
+            fieldRef: 
+              fieldPath: metadata.labels['tags.datadoghq.com/version']
+  strategy:
+    canary:
+      canaryService: svc-api-front-canary
+      stableService: svc-api-front-stable
+      trafficRouting:
+        istio:
+          virtualService:
+            name: api-front-vs
+            routes:
+            - primary
+      steps:
+      - setWeight: 50
+      - pause: {duration: 20m}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-api-front-stable
+  namespace: frases
+  labels:
+    app: api-front
+spec:
+  type: ClusterIP
+  selector:
+    app: api-front
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-api-front-canary
+  namespace: frases
+  labels:
+    app: api-front
+spec:
+  type: ClusterIP
+  selector:
+    app: api-front
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: frases-virtualti-net-cert
+  namespace: istio-system
+spec:
+  secretName: frases-virtualti-net-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "frases.virtualti.net"
+  dnsNames:
+    - "frases.virtualti.net"
+  privateKey:
+    rotationPolicy: Never
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
+metadata:
+  name: frases-gateway
+  namespace: istio-system
+  annotations:
+    external-dns.alpha.kubernetes.io/hostname: frases.virtualti.net
+    external-dns.alpha.kubernetes.io/target: 129.153.11.167
+spec:
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "frases.virtualti.net"
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - "frases.virtualti.net"
+    tls:
+      mode: SIMPLE
+      credentialName: frases-virtualti-net-tls
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: frases-vs
+  namespace: frases
+spec:
+  hosts:
+  - "frases.virtualti.net"
+  gateways:
+  - istio-system/frases-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: svc-api-front-stable.frases.svc.cluster.local
+        port:
+          number: 8080
+
+

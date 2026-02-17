@@ -49,12 +49,57 @@ spec:
     #         endpoint: "0.0.0.0:4318"
     usm:
       enabled: true
+    prometheusScrape:
+      enabled: true
+      enableServiceEndpoints: true
   override:  # for k0s, to allow the agent to run with the default seccomp profile
     nodeAgent:
       volumes:
         - name: seccomp-root
           hostPath:
             path: /var/lib/k0s/kubelet/seccomp
+      extraConfd:
+        configDataMap:
+          istio.yaml: |-
+            ad_identifiers:
+              - istio-proxy
+              - proxyv2
+              - proxyv2-rhel8
+            init_config:
+            instances:
+              - use_openmetrics: true
+                openmetrics_endpoint: http://%%host%%:15090/stats/prometheus
+                namespace: "istio"
+                metrics:
+                  - istio_.*
+                  - envoy_.*
+                  - pilot_.*
+                send_distribution_buckets: true
+                send_distribution_counts_as_monotonic: true
+                send_histograms_buckets: true
+                send_monotonic_counter: true
+                timeout: 30
+                tag_by_endpoint: false
+    clusterAgent:
+      extraConfd:
+        configDataMap:
+          istio.yaml: |-
+            cluster_check: true
+            init_config:
+            instances:
+              - use_openmetrics: true
+                openmetrics_endpoint: http://istiod.istio-system.svc.cluster.local:15014/metrics
+                namespace: "istio"
+                metrics:
+                  - pilot_.*
+                  - galley_.*
+                  - citadel_.*
+                  - mixer_.*
+                send_distribution_buckets: true
+                send_distribution_counts_as_monotonic: true
+                send_histograms_buckets: true
+                timeout: 30
+      
 
 
 # helm repo add datadog https://helm.datadoghq.com

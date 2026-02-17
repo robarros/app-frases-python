@@ -20,6 +20,7 @@ spec:
         tags.datadoghq.com/env: "dev"
         tags.datadoghq.com/service: "api-front"
         tags.datadoghq.com/version: "1.5.0"
+        sidecar.istio.io/inject: "true"
       annotations:
         admission.datadoghq.com/enabled: "true"
         admission.datadoghq.com/python-lib.version: "latest"
@@ -63,6 +64,10 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
+        - name: VERSION
+          valueFrom: 
+            fieldRef: 
+              fieldPath: metadata.labels['tags.datadoghq.com/version']
 ---
 apiVersion: v1
 kind: Service
@@ -83,7 +88,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: frases-virtualti-net-cert
-  namespace: frases
+  namespace: istio-system
 spec:
   secretName: frases-virtualti-net-tls
   issuerRef:
@@ -95,34 +100,86 @@ spec:
   privateKey:
     rotationPolicy: Never
 
+# ---
+# apiVersion: networking.k8s.io/v1
+# kind: Ingress
+# metadata:
+#   name: frases-ingress
+#   namespace: frases
+#   annotations:
+#     kubernetes.io/ingress.class: "nginx"
+#     external-dns.alpha.kubernetes.io/hostname: frases.virtualti.net
+#     external-dns.alpha.kubernetes.io/target: 150.136.247.86
+#     # nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
+#     # nginx.ingress.kubernetes.io/auth-tls-secret: frases/ca-secret
+#     # nginx.ingress.kubernetes.io/auth-tls-verify-client: "on"
+#     # nginx.ingress.kubernetes.io/auth-tls-verify-depth: "1"
+# spec:
+#   ingressClassName: nginx
+#   tls:
+#     - hosts:
+#         - frases.virtualti.net
+#       secretName: frases-virtualti-net-tls
+#   rules:
+#     - host: frases.virtualti.net
+#       http:
+#         paths:
+#           - path: /
+#             pathType: Prefix
+#             backend:
+#               service:
+#                 name: svc-api-front
+#                 port:
+#                   number: 8080
+
 ---
-apiVersion: networking.k8s.io/v1
-kind: Ingress
+apiVersion: networking.istio.io/v1beta1
+kind: Gateway
 metadata:
-  name: frases-ingress
-  namespace: frases
+  name: frases-gateway
+  namespace: istio-system
   annotations:
-    kubernetes.io/ingress.class: "nginx"
     external-dns.alpha.kubernetes.io/hostname: frases.virtualti.net
-    external-dns.alpha.kubernetes.io/target: 150.136.247.86
-    # nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
-    # nginx.ingress.kubernetes.io/auth-tls-secret: frases/ca-secret
-    # nginx.ingress.kubernetes.io/auth-tls-verify-client: "on"
-    # nginx.ingress.kubernetes.io/auth-tls-verify-depth: "1"
+    external-dns.alpha.kubernetes.io/target: 129.153.11.167
 spec:
-  ingressClassName: nginx
-  tls:
-    - hosts:
-        - frases.virtualti.net
-      secretName: frases-virtualti-net-tls
-  rules:
-    - host: frases.virtualti.net
-      http:
-        paths:
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: svc-api-front
-                port:
-                  number: 8080
+  selector:
+    istio: ingressgateway
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "frases.virtualti.net"
+    tls:
+      httpsRedirect: true
+  - port:
+      number: 443
+      name: https
+      protocol: HTTPS
+    hosts:
+    - "frases.virtualti.net"
+    tls:
+      mode: SIMPLE
+      credentialName: frases-virtualti-net-tls
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: frases-vs
+  namespace: frases
+spec:
+  hosts:
+  - "frases.virtualti.net"
+  gateways:
+  - istio-system/frases-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: svc-api-front
+        port:
+          number: 8080

@@ -1,0 +1,92 @@
+# Exemplo: ConfigMap com múltiplos mappings
+#
+# Este arquivo demonstra como adicionar vários endpoints mockados
+# em um único ConfigMap do WireMock
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: wiremock-mappings
+  namespace: wiremock
+  labels:
+    app: wiremock
+data:
+  # Mock 1: Quotes Random
+  quotes-random.json: |
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/quotes/random"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": 42,
+          "quote": "A jornada de mil milhas começa com um único passo.",
+          "author": "Lao Tzu"
+        }
+      }
+    }
+
+  # Mock 2: Quotes por ID
+  quotes-by-id.json: |
+    {
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/quotes/[0-9]+"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": 1,
+          "quote": "Mock de quote específica",
+          "author": "Autor Exemplo"
+        }
+      }
+    }
+
+  # Mock 3: Erro simulado
+  quotes-error.json: |
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/quotes/error"
+      },
+      "response": {
+        "status": 500,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "error": "Internal Server Error",
+          "message": "Erro simulado para teste"
+        }
+      }
+    }
+
+  # Mock 4: Delay na resposta (útil para testes de timeout)
+  quotes-slow.json: |
+    {
+      "request": {
+        "method": "GET",
+        "urlPath": "/quotes/slow"
+      },
+      "response": {
+        "status": 200,
+        "fixedDelayMilliseconds": 5000,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": 99,
+          "quote": "Resposta lenta para teste de timeout",
+          "author": "Test Author"
+        }
+      }
+    }

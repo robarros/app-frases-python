@@ -1,5 +1,6 @@
 import logging
 import sys
+import os
 import httpx
 
 from fastapi import FastAPI, HTTPException
@@ -52,7 +53,8 @@ logHandler.addFilter(DatadogTraceFilter())
 logger.addHandler(logHandler)
 logger.propagate = False
 
-QUOTE_URL = "https://dummyjson.com/quotes/random"
+QUOTE_URL = os.getenv('QUOTE_URL', 'https://dummyjson.com/quotes/random')
+VERSION = os.getenv('VERSION', '1.0.0')
 
 
 @app.get("/frases")
@@ -76,4 +78,5 @@ async def frases():
         "frase": data.get("quote"),
         "autor": data.get("author"),
         "fonte": "dummyjson.com",
+        "version": VERSION,
     }

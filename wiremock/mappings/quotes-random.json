@@ -1,0 +1,17 @@
+{
+    "request": {
+        "method": "GET",
+        "urlPath": "/quotes/random"
+    },
+    "response": {
+        "status": 200,
+        "headers": {
+            "Content-Type": "application/json"
+        },
+        "jsonBody": {
+            "id": 42,
+            "quote": "A jornada de mil milhas começa com um único passo.",
+            "author": "Lao Tzu"
+        }
+    }
+}

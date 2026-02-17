@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wiremock
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: <SEU_REPOSITORIO_GIT>  # Substitua pelo URL do seu repositório
+    targetRevision: HEAD
+    path: wiremock
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -20,6 +20,7 @@ spec:
         tags.datadoghq.com/env: "dev"
         tags.datadoghq.com/service: "backend"
         tags.datadoghq.com/version: "1.5.0"
+        sidecar.istio.io/inject: "true"
       annotations:
         admission.datadoghq.com/enabled: "true"
         admission.datadoghq.com/python-lib.version: "latest"
@@ -61,6 +62,14 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: status.hostIP
+        - name: QUOTE_URL 
+          value: "https://dummyjson.com/quotes/random"
+        - name: VERSION
+          valueFrom: 
+            fieldRef: 
+              fieldPath: metadata.labels['tags.datadoghq.com/version']
+
+
 ---
 apiVersion: v1
 kind: Service
@@ -75,3 +84,70 @@ spec:
   - protocol: TCP
     port: 8080
     targetPort: 8080
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: backend-vs
+  namespace: frases
+spec:
+  hosts:
+  - svc-backend.frases.svc.cluster.local
+  http:
+  - match:
+    - uri:
+        prefix: /
+    route:
+    - destination:
+        host: svc-backend.frases.svc.cluster.local
+        port:
+          number: 8080
+    # fault:
+    #   abort:
+    #     httpStatus: 500
+    #     percentage:
+    #       value: 50
+    #   delay:
+    #     fixedDelay: 2s
+    #     percentage:
+    #       value: 50
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: dummyjson-external
+  namespace: frases
+spec:
+  hosts:
+  - dummyjson.com
+  ports:
+  - number: 443
+    name: https
+    protocol: HTTPS
+  location: MESH_EXTERNAL
+  resolution: DNS
+  # exportTo: # ["."] O serviço é visível apenas no namespace atual. exportTo: ["*"] - O serviço é visível em todos os namespaces
+  # - "."
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: dummyjson-vs
+  namespace: frases
+spec:
+  hosts:
+  - dummyjson.com
+  http:
+  - timeout: 30s  # Total request timeout
+    retries:
+      attempts: 3  # Retry up to 3 times
+      perTryTimeout: 10s  # Timeout per attempt
+      retryOn: "5xx,reset,connect-failure,retriable-4xx"
+    route:
+    - destination:
+        host: dummyjson.com
+        port:
+          number: 443
