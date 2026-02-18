@@ -166,6 +166,15 @@ spec:
       attempts: 3
       perTryTimeout: 10s
       retryOn: "5xx,reset,connect-failure,retriable-4xx"
+    fault:
+      # abort:
+      #   percentage:
+      #     value: 50        
+      #   httpStatus: 400 
+      delay:
+        percentage:
+          value: 50
+        fixedDelay: 5s
     route:
     - destination:
         host: svc-backend.frases.svc.cluster.local
