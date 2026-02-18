@@ -192,7 +192,7 @@ spec:
       weight: 0
 
 ---
-apiVersion: networking.istio.io/v1beta1
+apiVersion: networking.istio.io/v1
 kind: ServiceEntry
 metadata:
   name: dummyjson-external
@@ -200,34 +200,48 @@ metadata:
 spec:
   hosts:
   - dummyjson.com
+  location: MESH_EXTERNAL
   ports:
   - number: 443
     name: https
-    protocol: HTTPS
-  location: MESH_EXTERNAL
+    protocol: HTTP
   resolution: DNS
 
 ---
-apiVersion: networking.istio.io/v1beta1
+apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
   name: dummyjson-vs
   namespace: frases
 spec:
-  hosts:
-  - dummyjson.com
   gateways:
   - mesh
+  hosts:
+  - dummyjson.com
   http:
-  - route:
+  - retries:
+      attempts: 3
+      perTryTimeout: 10s
+    route:
     - destination:
         host: dummyjson.com
         port:
           number: 443
     timeout: 30s
-    retries:
-      attempts: 3
-      perTryTimeout: 10s
+
+---
+apiVersion: networking.istio.io/v1
+kind: DestinationRule
+metadata:
+  name: dummyjson-tls
+  namespace: frases
+spec:
+  host: dummyjson.com
+  trafficPolicy:
+    tls:
+      mode: SIMPLE
+      sni: dummyjson.com
+
 
 # ---
 # apiVersion: networking.istio.io/v1beta1
@@ -261,3 +275,6 @@ spec:
 #   - name: canary
 #     labels:
 #       app: backend
+
+
+
