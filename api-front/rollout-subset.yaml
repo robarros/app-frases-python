@@ -35,7 +35,7 @@ spec:
         - containerPort: 8080
         env:
         - name: SERVICE2_URL
-          value: "http://svc-backend-stable:8080/frases"
+          value: "http://svc-backend:8080/frases"
         - name: DD_ENV
           valueFrom:
             fieldRef:
