@@ -8,10 +8,10 @@ metadata:
     app: api-front
     tags.datadoghq.com/env: "dev"
     tags.datadoghq.com/service: "api-front"
-    tags.datadoghq.com/version: "1.11.0"
+    tags.datadoghq.com/version: "1.20.0"
 spec:
-  replicas: 2
-  revisionHistoryLimit: 5
+  replicas: 4
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
       app: api-front
@@ -21,7 +21,7 @@ spec:
         app: api-front
         tags.datadoghq.com/env: "dev"
         tags.datadoghq.com/service: "api-front"
-        tags.datadoghq.com/version: "1.11.0"
+        tags.datadoghq.com/version: "1.20.0"
         sidecar.istio.io/inject: "true"
       annotations:
         admission.datadoghq.com/enabled: "true"
@@ -30,12 +30,12 @@ spec:
     spec:
       containers:
       - name: api-front
-        image: robarros/api-front:v10
+        image: robarros/api-front:v12
         ports:
         - containerPort: 8080
         env:
         - name: SERVICE2_URL
-          value: "http://svc-backend-stable:8080/frases"
+          value: "http://svc-backend:8080/frases"
         - name: DD_ENV
           valueFrom:
             fieldRef:
@@ -82,8 +82,12 @@ spec:
             routes:
             - primary
       steps:
+      - setWeight: 25
+      - pause: {}
       - setWeight: 50
-      - pause: {duration: 20m}
+      - pause: {}
+      - setWeight: 75
+      - pause: {}
 
 ---
 apiVersion: v1

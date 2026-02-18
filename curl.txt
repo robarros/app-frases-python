@@ -2,3 +2,11 @@ while true; do
   curl -s https://frases.virtualti.net/ | jq .version
   sleep 0.2
 done
+
+
+while true; do
+  echo "$(date '+%H:%M:%S')"
+  curl -s https://frases.virtualti.net/ | jq .version
+  sleep 0.2
+done
+
