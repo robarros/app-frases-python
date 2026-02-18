@@ -10,7 +10,7 @@ metadata:
     tags.datadoghq.com/service: "api-front"
     tags.datadoghq.com/version: "1.17.0"
 spec:
-  replicas: 5
+  replicas: 4
   revisionHistoryLimit: 10
   selector:
     matchLabels:
@@ -70,6 +70,7 @@ spec:
               fieldPath: metadata.labels['tags.datadoghq.com/version']
   strategy:
     canary:
+      dynamicStableScale: true
       trafficRouting:
         istio:
           virtualService:
@@ -81,14 +82,12 @@ spec:
             canarySubsetName: canary
             stableSubsetName: stable
       steps:
-      - setWeight: 20
-      - pause: {duration: 10m}
-      - setWeight: 40
-      - pause: {duration: 10m}
-      - setWeight: 60
-      - pause: {duration: 10m}
-      - setWeight: 80
-      - pause: {duration: 10m}
+      - setWeight: 25
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+      - setWeight: 75
+      - pause: {}
 
 ---
 apiVersion: v1
