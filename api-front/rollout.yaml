@@ -172,7 +172,9 @@ metadata:
   namespace: frases
 spec:
   hosts:
-  - api-front
+  - "frases.virtualti.net"
+  gateways:
+  - istio-system/frases-gateway
   http:
   - name: primary
     route:
@@ -186,26 +188,5 @@ spec:
         port:
           number: 8080
       weight: 0
-
----
-apiVersion: networking.istio.io/v1beta1
-kind: VirtualService
-metadata:
-  name: frases-vs
-  namespace: frases
-spec:
-  hosts:
-  - "frases.virtualti.net"
-  gateways:
-  - istio-system/frases-gateway
-  http:
-  - match:
-    - uri:
-        prefix: /
-    route:
-    - destination:
-        host: svc-api-front-stable.frases.svc.cluster.local
-        port:
-          number: 8080
 
 
