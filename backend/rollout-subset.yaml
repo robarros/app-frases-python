@@ -8,7 +8,7 @@ metadata:
     app: backend
     tags.datadoghq.com/env: "dev"
     tags.datadoghq.com/service: "backend"
-    tags.datadoghq.com/version: "1.12.0"
+    tags.datadoghq.com/version: "1.13.0"
 spec:
   replicas: 2
   revisionHistoryLimit: 5
@@ -21,7 +21,7 @@ spec:
         app: backend
         tags.datadoghq.com/env: "dev"
         tags.datadoghq.com/service: "backend"
-        tags.datadoghq.com/version: "1.12.0"
+        tags.datadoghq.com/version: "1.13.0"
         sidecar.istio.io/inject: "true"
       annotations:
         admission.datadoghq.com/enabled: "true"
