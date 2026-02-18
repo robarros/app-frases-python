@@ -109,13 +109,13 @@ metadata:
   namespace: frases
 spec:
   host: svc-api-front.frases.svc.cluster.local
-  trafficPolicy:
-    loadBalancer:
-      simple: ROUND_ROBIN
-      warmup:
-        minimumPercent: 10
-        duration: 1m
-        aggression: 1.0
+  # trafficPolicy:
+  #   loadBalancer:
+  #     simple: ROUND_ROBIN
+  #     warmup:
+  #       minimumPercent: 10
+  #       duration: 1m
+  #       aggression: 1.0
   subsets:
   - name: stable
     labels:
