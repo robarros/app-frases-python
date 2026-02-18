@@ -216,3 +216,36 @@ spec:
         host: dummyjson.com
         port:
           number: 443
+
+# ---
+# apiVersion: networking.istio.io/v1beta1
+# kind: DestinationRule
+# metadata:
+#   name: backend-destrule
+#   namespace: frases
+# spec:
+#   host: svc-backend.frases.svc.cluster.local
+#   trafficPolicy:
+#     loadBalancer:
+#       simple: ROUND_ROBIN
+#     connectionPool:
+#       tcp:
+#         maxConnections: 100              # Máx 100 conexões TCP
+#       http:
+#         http1MaxPendingRequests: 100     # Máx 100 req pendentesky1.0
+#         http1MaxRequests: 200            # Máx 200 req simultâneas
+#         h2UpgradePolicy: UPGRADE         # Usar HTTP/2
+#     outlierDetection:
+#       consecutive5xxErrors: 5            # 5 erros = remove do pool
+#       interval: 30s                      # Verificar a cada 30s
+#       baseEjectionTime: 30s              # 30s mínimo removido
+#       maxEjectionPercent: 50             # Não remover mais de 50% dos pods
+#       minRequestVolume: 5                # Mínimo 5 req antes de detectar
+#       splitExternalLocalOriginErrors: true # Considerar erros externos
+#   subsets:
+#   - name: stable
+#     labels:
+#       app: backend
+#   - name: canary
+#     labels:
+#       app: backend
