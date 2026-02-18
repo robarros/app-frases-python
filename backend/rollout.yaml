@@ -120,7 +120,9 @@ metadata:
   namespace: frases
 spec:
   hosts:
-  - "*"
+  - svc-backend-stable
+  gateways:
+  - mesh
   http:
   - name: primary
     match:
@@ -134,9 +136,13 @@ spec:
     route:
     - destination:
         host: svc-backend-stable.frases.svc.cluster.local
+        port:
+          number: 8080
       weight: 100
     - destination:
         host: svc-backend-canary.frases.svc.cluster.local
+        port:
+          number: 8080
       weight: 0
 
 ---
