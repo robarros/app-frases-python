@@ -110,10 +110,10 @@ spec:
   subsets:
   - name: stable
     labels:
-      rollouts-pod-template-hash: stable
+      app: backend
   - name: canary
     labels:
-      rollouts-pod-template-hash: canary
+      app: backend
 
 ---
 apiVersion: networking.istio.io/v1beta1

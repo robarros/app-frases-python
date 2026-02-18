@@ -112,10 +112,10 @@ spec:
   subsets:
   - name: stable
     labels:
-      rollouts-pod-template-hash: stable
+      app: api-front
   - name: canary
     labels:
-      rollouts-pod-template-hash: canary
+      app: api-front
 
 ---
 apiVersion: cert-manager.io/v1
