@@ -153,7 +153,9 @@ metadata:
   namespace: frases
 spec:
   hosts:
-  - svc-backend
+  - svc-backend                      
+  - svc-backend.frases                      
+  - svc-backend.frases.svc.cluster.local
   gateways:
   - mesh
   http:
@@ -161,20 +163,20 @@ spec:
     match:
     - uri:
         prefix: /
-    timeout: 30s
+    timeout: 25s
     retries:
-      attempts: 3
-      perTryTimeout: 10s
-      retryOn: "5xx,reset,connect-failure,retriable-4xx"
+      attempts: 2
+      perTryTimeout: 12s
+      retryOn: "reset,connect-failure,retriable-4xx"
     fault:
       # abort:
       #   percentage:
       #     value: 50        
       #   httpStatus: 400 
-      delay:
-        percentage:
-          value: 50
-        fixedDelay: 5s
+      # delay:
+      #   percentage:
+      #     value: 50
+      #   fixedDelay: 5s
     route:
     - destination:
         host: svc-backend.frases.svc.cluster.local
@@ -214,17 +216,20 @@ metadata:
 spec:
   hosts:
   - dummyjson.com
+  gateways:
+  - mesh
   http:
-  - timeout: 30s
-    retries:
-      attempts: 3
-      perTryTimeout: 10s
-      retryOn: "5xx,reset,connect-failure,retriable-4xx"
+  - match:
+    - port: 443
     route:
     - destination:
         host: dummyjson.com
         port:
           number: 443
+    timeout: 30s
+    retries:
+      attempts: 3
+      perTryTimeout: 10s
 
 # ---
 # apiVersion: networking.istio.io/v1beta1
