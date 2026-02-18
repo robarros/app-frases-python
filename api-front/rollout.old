@@ -70,6 +70,7 @@ spec:
               fieldPath: metadata.labels['tags.datadoghq.com/version']
   strategy:
     canary:
+      dynamicStableScale: true
       canaryService: svc-api-front-canary
       stableService: svc-api-front-stable
       trafficRouting:
