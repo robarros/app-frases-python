@@ -10,7 +10,7 @@ metadata:
     tags.datadoghq.com/service: "backend"
     tags.datadoghq.com/version: "1.14.0"
 spec:
-  replicas: 2
+  replicas: 1
   revisionHistoryLimit: 5
   selector:
     matchLabels:
