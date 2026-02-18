@@ -8,7 +8,7 @@ metadata:
     app: backend
     tags.datadoghq.com/env: "dev"
     tags.datadoghq.com/service: "backend"
-    tags.datadoghq.com/version: "1.17.0"
+    tags.datadoghq.com/version: "1.18.0"
 spec:
   replicas: 4
   revisionHistoryLimit: 10
@@ -21,7 +21,7 @@ spec:
         app: backend
         tags.datadoghq.com/env: "dev"
         tags.datadoghq.com/service: "backend"
-        tags.datadoghq.com/version: "1.17.0"
+        tags.datadoghq.com/version: "1.18.0"
         sidecar.istio.io/inject: "true"
       annotations:
         admission.datadoghq.com/enabled: "true"
@@ -72,7 +72,7 @@ spec:
               fieldPath: metadata.labels['tags.datadoghq.com/version']
   strategy:
     canary:
-      dynamicStableScale: true
+      # dynamicStableScale: true
       trafficRouting:
         istio:
           virtualService:
