@@ -1,3 +1,5 @@
+#### /
+
 while true; do
   curl -s https://frases.virtualti.net/ | jq .version
   sleep 0.2
@@ -5,8 +7,24 @@ done
 
 
 while true; do
-  echo "$(date '+%H:%M:%S')"
-  curl -s https://frases.virtualti.net/ | jq .version
+  v=$(curl -s https://frases.virtualti.net/ | jq -r .version)
+  echo "$v -- $(date '+%H:%M:%S')"
+  sleep 0.2
+done
+
+
+#### /frases
+
+
+while true; do
+  curl -s https://frases.virtualti.net/frases | jq .version
+  sleep 0.2
+done
+
+
+while true; do
+  v=$(curl -s https://frases.virtualti.net/frases | jq -r .version)
+  echo "$v -- $(date '+%H:%M:%S')"
   sleep 0.2
 done
 

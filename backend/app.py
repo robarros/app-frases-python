@@ -57,6 +57,11 @@ QUOTE_URL = os.getenv('QUOTE_URL', 'https://dummyjson.com/quotes/random')
 VERSION = os.getenv('VERSION', '1.0.0')
 
 
+@app.get("/healthz")
+def healthz():
+    return {"status": "ok"}
+
+
 @app.get("/frases")
 async def frases():
     try:

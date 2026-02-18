@@ -69,6 +69,11 @@ def root():
     return {"mensagem": "ola mundo", "hora_brasil": now, "version": VERSION}
 
 
+@app.get("/healthz")
+def healthz():
+    return {"status": "ok"}
+
+
 @app.get("/frases")
 async def frases():
     try:
