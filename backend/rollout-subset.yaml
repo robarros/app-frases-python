@@ -11,7 +11,7 @@ metadata:
     tags.datadoghq.com/version: "1.15.0"
 spec:
   replicas: 1
-  revisionHistoryLimit: 5
+  revisionHistoryLimit: 10
   selector:
     matchLabels:
       app: backend
@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: robarros/backend:v11
+        image: robarros/backend:v9
         ports:
         - containerPort: 8080
         env:
