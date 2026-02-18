@@ -1,0 +1,16 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: frases-virtualti-net-cert
+  namespace: istio-system
+spec:
+  secretName: frases-virtualti-net-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "frases.virtualti.net"
+  dnsNames:
+    - "frases.virtualti.net"
+  privateKey:
+    rotationPolicy: Never
