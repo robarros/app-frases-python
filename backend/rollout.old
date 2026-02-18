@@ -58,6 +58,8 @@ spec:
           value: "true"
         - name: DD_RUNTIME_METRICS_ENABLED
           value: "true"
+        - name: DD_APM_IGNORE_RESOURCES
+          value: "GET /healthz/ready, GET /stats/prometheus"
         - name: DD_AGENT_HOST
           valueFrom:
             fieldRef:
