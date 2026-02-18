@@ -1,0 +1,188 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: backend
+  namespace: frases
+  labels:
+    app: backend
+    tags.datadoghq.com/env: "dev"
+    tags.datadoghq.com/service: "backend"
+    tags.datadoghq.com/version: "1.11.0"
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+        tags.datadoghq.com/env: "dev"
+        tags.datadoghq.com/service: "backend"
+        tags.datadoghq.com/version: "1.11.0"
+        sidecar.istio.io/inject: "true"
+      annotations:
+        admission.datadoghq.com/enabled: "true"
+        admission.datadoghq.com/python-lib.version: "latest"
+        ad.datadoghq.com/backend.logs: '[{"source":"python","service":"backend"}]'
+    spec:
+      containers:
+      - name: backend
+        image: robarros/backend:v10
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DD_ENV
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/env']
+        - name: DD_SERVICE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.labels['tags.datadoghq.com/service']
+        - name: DD_VERSION 
+          valueFrom: 
+            fieldRef: 
+              fieldPath: metadata.labels['tags.datadoghq.com/version']
+        - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
+          value: "true"
+        - name: DD_LOGS_INJECTION
+          value: "true"
+        - name: DD_TRACE_ENABLED
+          value: "true"
+        - name: DD_TRACE_STARTUP_LOGS
+          value: "true"
+        - name: DD_PROFILING_ENABLED
+          value: "true"
+        - name: DD_RUNTIME_METRICS_ENABLED
+          value: "true"
+        - name: DD_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.hostIP
+        - name: QUOTE_URL 
+          value: "https://dummyjson.com/quotes/random"
+        - name: VERSION
+          valueFrom: 
+            fieldRef: 
+              fieldPath: metadata.labels['tags.datadoghq.com/version']
+  strategy:
+    canary:
+      trafficRouting:
+        istio:
+          virtualService:
+            name: backend-vs
+            routes:
+            - primary
+          destinationRule:
+            name: backend-destrule
+            canarySubsetName: canary
+            stableSubsetName: stable
+      steps:
+      - setWeight: 50
+      - pause: {duration: 20m}
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-backend
+  namespace: frases
+spec:
+  type: ClusterIP
+  selector:
+    app: backend
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 8080
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: backend-destrule
+  namespace: frases
+spec:
+  host: svc-backend.frases.svc.cluster.local
+  subsets:
+  - name: stable
+    labels:
+      rollouts-pod-template-hash: stable
+  - name: canary
+    labels:
+      rollouts-pod-template-hash: canary
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: backend-vs
+  namespace: frases
+spec:
+  hosts:
+  - svc-backend
+  gateways:
+  - mesh
+  http:
+  - name: primary
+    match:
+    - uri:
+        prefix: /
+    timeout: 30s
+    retries:
+      attempts: 3
+      perTryTimeout: 10s
+      retryOn: "5xx,reset,connect-failure,retriable-4xx"
+    route:
+    - destination:
+        host: svc-backend.frases.svc.cluster.local
+        subset: stable
+        port:
+          number: 8080
+      weight: 100
+    - destination:
+        host: svc-backend.frases.svc.cluster.local
+        subset: canary
+        port:
+          number: 8080
+      weight: 0
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: dummyjson-external
+  namespace: frases
+spec:
+  hosts:
+  - dummyjson.com
+  ports:
+  - number: 443
+    name: https
+    protocol: HTTPS
+  location: MESH_EXTERNAL
+  resolution: DNS
+
+---
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: dummyjson-vs
+  namespace: frases
+spec:
+  hosts:
+  - dummyjson.com
+  http:
+  - timeout: 30s
+    retries:
+      attempts: 3
+      perTryTimeout: 10s
+      retryOn: "5xx,reset,connect-failure,retriable-4xx"
+    route:
+    - destination:
+        host: dummyjson.com
+        port:
+          number: 443
