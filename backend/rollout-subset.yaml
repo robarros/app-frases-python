@@ -8,7 +8,7 @@ metadata:
     app: backend
     tags.datadoghq.com/env: "dev"
     tags.datadoghq.com/service: "backend"
-    tags.datadoghq.com/version: "1.13.0"
+    tags.datadoghq.com/version: "1.14.0"
 spec:
   replicas: 2
   revisionHistoryLimit: 5
@@ -21,7 +21,7 @@ spec:
         app: backend
         tags.datadoghq.com/env: "dev"
         tags.datadoghq.com/service: "backend"
-        tags.datadoghq.com/version: "1.13.0"
+        tags.datadoghq.com/version: "1.14.0"
         sidecar.istio.io/inject: "true"
       annotations:
         admission.datadoghq.com/enabled: "true"
@@ -107,6 +107,13 @@ metadata:
   namespace: frases
 spec:
   host: svc-backend.frases.svc.cluster.local
+  trafficPolicy:
+    loadBalancer:
+      simple: ROUND_ROBIN
+      warmup:
+        minimumPercent: 10
+        duration: 1m
+        aggression: 1.0
   subsets:
   - name: stable
     labels:
