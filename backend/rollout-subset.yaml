@@ -8,9 +8,9 @@ metadata:
     app: backend
     tags.datadoghq.com/env: "dev"
     tags.datadoghq.com/service: "backend"
-    tags.datadoghq.com/version: "1.15.0"
+    tags.datadoghq.com/version: "1.16.0"
 spec:
-  replicas: 1
+  replicas: 5
   revisionHistoryLimit: 10
   selector:
     matchLabels:
@@ -21,7 +21,7 @@ spec:
         app: backend
         tags.datadoghq.com/env: "dev"
         tags.datadoghq.com/service: "backend"
-        tags.datadoghq.com/version: "1.15.0"
+        tags.datadoghq.com/version: "1.16.0"
         sidecar.istio.io/inject: "true"
       annotations:
         admission.datadoghq.com/enabled: "true"
@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: robarros/backend:v9
+        image: robarros/backend:v12
         ports:
         - containerPort: 8080
         env:
@@ -81,7 +81,13 @@ spec:
             canarySubsetName: canary
             stableSubsetName: stable
       steps:
-      - setWeight: 50
+      - setWeight: 20
+      - pause: {duration: 20m}
+      - setWeight: 40
+      - pause: {duration: 20m}
+      - setWeight: 60
+      - pause: {duration: 20m}
+      - setWeight: 80
       - pause: {duration: 20m}
 
 ---
