@@ -88,7 +88,7 @@ spec:
               fieldPath: metadata.labels['tags.datadoghq.com/version']
   strategy:
     canary:
-      dynamicStableScale: true
+      #dynamicStableScale: true
       trafficRouting:
         istio:
           virtualService:
