@@ -26,7 +26,6 @@ spec:
         admission.datadoghq.com/enabled: "true"
         admission.datadoghq.com/config.mode: "socket"
       annotations:
-      #  admission.datadoghq.com/enabled: "true"
         admission.datadoghq.com/python-lib.version: "latest"
         ad.datadoghq.com/api-front.logs: '[{"source":"python","service":"api-front"}]'
     spec:
