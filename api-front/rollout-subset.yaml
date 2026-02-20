@@ -29,63 +29,63 @@ spec:
         ad.datadoghq.com/api-front.logs: '[{"source":"python","service":"api-front"}]'
     spec:
       containers:
-      - name: api-front
-        image: robarros/api-front:v13
-        ports:
-        - containerPort: 8080
-        livenessProbe:
-          httpGet:
-            path: /healthz
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /healthz
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 5
-          timeoutSeconds: 5
-          failureThreshold: 3
-        env:
-        - name: SERVICE2_URL
-          value: "http://svc-backend:8080/frases"
-        - name: DD_ENV
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.labels['tags.datadoghq.com/env']
-        - name: DD_SERVICE
-          valueFrom:
-            fieldRef:
-              fieldPath: metadata.labels['tags.datadoghq.com/service']
-        - name: DD_VERSION 
-          valueFrom: 
-            fieldRef: 
-              fieldPath: metadata.labels['tags.datadoghq.com/version']
-        - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
-          value: "true"
-        - name: DD_LOGS_INJECTION
-          value: "true"
-        - name: DD_TRACE_ENABLED
-          value: "true"
-        - name: DD_TRACE_STARTUP_LOGS
-          value: "true"
-        - name: DD_PROFILING_ENABLED
-          value: "true"
-        - name: DD_RUNTIME_METRICS_ENABLED
-          value: "true"
-        - name: DD_APM_IGNORE_RESOURCES
-          value: "GET /healthz/ready, GET /stats/prometheus"
-        - name: DD_AGENT_HOST
-          valueFrom:
-            fieldRef:
-              fieldPath: status.hostIP
-        - name: VERSION
-          valueFrom: 
-            fieldRef: 
-              fieldPath: metadata.labels['tags.datadoghq.com/version']
+        - name: api-front
+          image: robarros/api-front:v13
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 3
+          env:
+            - name: SERVICE2_URL
+              value: "http://svc-backend:8080/frases"
+            - name: DD_ENV
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/env']
+            - name: DD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/service']
+            - name: DD_VERSION
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/version']
+            - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
+              value: "true"
+            - name: DD_LOGS_INJECTION
+              value: "true"
+            - name: DD_TRACE_ENABLED
+              value: "true"
+            - name: DD_TRACE_STARTUP_LOGS
+              value: "true"
+            - name: DD_PROFILING_ENABLED
+              value: "true"
+            - name: DD_RUNTIME_METRICS_ENABLED
+              value: "true"
+            - name: DD_APM_IGNORE_RESOURCES
+              value: "GET /healthz/ready, GET /stats/prometheus"
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: VERSION
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/version']
   strategy:
     canary:
       #dynamicStableScale: true
@@ -94,18 +94,18 @@ spec:
           virtualService:
             name: api-front-vs
             routes:
-            - primary
+              - primary
           destinationRule:
             name: api-front-destrule
             canarySubsetName: canary
             stableSubsetName: stable
       steps:
-      - setWeight: 25
-      - pause: {}
-      - setWeight: 50
-      - pause: {}
-      - setWeight: 75
-      - pause: {}
+        - setWeight: 25
+        - pause: {}
+        - setWeight: 50
+        - pause: {}
+        - setWeight: 75
+        - pause: {}
 
 ---
 apiVersion: v1
@@ -120,9 +120,9 @@ spec:
   selector:
     app: api-front
   ports:
-  - protocol: TCP
-    port: 8080
-    targetPort: 8080
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
 
 ---
 apiVersion: networking.istio.io/v1beta1
@@ -140,12 +140,12 @@ spec:
   #       duration: 1m
   #       aggression: 1.0
   subsets:
-  - name: stable
-    labels:
-      app: api-front
-  - name: canary
-    labels:
-      app: api-front
+    - name: stable
+      labels:
+        app: api-front
+    - name: canary
+      labels:
+        app: api-front
 
 ---
 apiVersion: networking.istio.io/v1beta1
@@ -160,23 +160,23 @@ spec:
   selector:
     istio: ingressgateway
   servers:
-  - port:
-      number: 80
-      name: http
-      protocol: HTTP
-    hosts:
-    - "frases.virtualti.net"
-    tls:
-      httpsRedirect: true
-  - port:
-      number: 443
-      name: https
-      protocol: HTTPS
-    hosts:
-    - "frases.virtualti.net"
-    tls:
-      mode: SIMPLE
-      credentialName: frases-virtualti-net-tls
+    - port:
+        number: 80
+        name: http
+        protocol: HTTP
+      hosts:
+        - "frases.virtualti.net"
+      tls:
+        httpsRedirect: true
+    - port:
+        number: 443
+        name: https
+        protocol: HTTPS
+      hosts:
+        - "frases.virtualti.net"
+      tls:
+        mode: SIMPLE
+        credentialName: frases-virtualti-net-tls
 
 ---
 apiVersion: networking.istio.io/v1beta1
@@ -186,21 +186,21 @@ metadata:
   namespace: frases
 spec:
   hosts:
-  - "frases.virtualti.net"
+    - "frases.virtualti.net"
   gateways:
-  - istio-system/frases-gateway
+    - istio-system/frases-gateway
   http:
-  - name: primary
-    route:
-    - destination:
-        host: svc-api-front.frases.svc.cluster.local
-        subset: stable
-        port:
-          number: 8080
-      weight: 100
-    - destination:
-        host: svc-api-front.frases.svc.cluster.local
-        subset: canary
-        port:
-          number: 8080
-      weight: 0
+    - name: primary
+      route:
+        - destination:
+            host: svc-api-front.frases.svc.cluster.local
+            subset: stable
+            port:
+              number: 8080
+          weight: 100
+        - destination:
+            host: svc-api-front.frases.svc.cluster.local
+            subset: canary
+            port:
+              number: 8080
+          weight: 0
