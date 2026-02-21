@@ -8,9 +8,9 @@ metadata:
     app: api-front
     tags.datadoghq.com/env: "dev"
     tags.datadoghq.com/service: "api-front"
-    tags.datadoghq.com/version: "1.24.0"
+    tags.datadoghq.com/version: "1.25.0"
 spec:
-  replicas: 4
+  replicas: 3
   revisionHistoryLimit: 10
   selector:
     matchLabels:
@@ -21,7 +21,7 @@ spec:
         app: api-front
         tags.datadoghq.com/env: "dev"
         tags.datadoghq.com/service: "api-front"
-        tags.datadoghq.com/version: "1.24.0"
+        tags.datadoghq.com/version: "1.25.0"
         sidecar.istio.io/inject: "true"
         admission.datadoghq.com/enabled: "true"
         admission.datadoghq.com/config.mode: "socket"
@@ -101,12 +101,12 @@ spec:
             canarySubsetName: canary
             stableSubsetName: stable
       steps:
-        - setWeight: 25
+        - setWeight: 33
         - pause: {}
-        - setWeight: 50
+        - setWeight: 66
         - pause: {}
-        - setWeight: 75
-        - pause: {}
+        # - setWeight: 75
+        # - pause: {}
 
 ---
 apiVersion: v1
