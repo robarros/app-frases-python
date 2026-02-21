@@ -77,3 +77,4 @@ kubectl logs -l app=service2 --tail=50 -f
 kubectl delete -f service1/k8s.yaml
 kubectl delete -f service2/k8s.yaml
 ```
+[![App Status](https://argocd.virtualti.net/api/badge?name=app-frases-python&revision=true&showAppName=true)](https://argocd.virtualti.net/applications/app-frases-python)
