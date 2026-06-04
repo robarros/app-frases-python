@@ -133,6 +133,9 @@ metadata:
   namespace: frases
 spec:
   host: svc-api-front.frases.svc.cluster.local
+  trafficPolicy:
+    tls:
+      mode: DISABLE
   # trafficPolicy:
   #   loadBalancer:
   #     simple: ROUND_ROBIN
