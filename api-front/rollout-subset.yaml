@@ -8,7 +8,7 @@ metadata:
     app: api-front
     tags.datadoghq.com/env: "dev"
     tags.datadoghq.com/service: "api-front"
-    tags.datadoghq.com/version: "1.25.0"
+    tags.datadoghq.com/version: "1.30.0"
 spec:
   replicas: 1
   revisionHistoryLimit: 10
@@ -21,7 +21,7 @@ spec:
         app: api-front
         tags.datadoghq.com/env: "dev"
         tags.datadoghq.com/service: "api-front"
-        tags.datadoghq.com/version: "1.25.0"
+        tags.datadoghq.com/version: "1.30.0"
         sidecar.istio.io/inject: "true"
         admission.datadoghq.com/enabled: "true"
         # admission.datadoghq.com/config.mode: "socket"
