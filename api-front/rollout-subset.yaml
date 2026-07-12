@@ -67,6 +67,8 @@ spec:
                   fieldPath: metadata.labels['tags.datadoghq.com/version']
             - name: DD_DYNAMIC_INSTRUMENTATION_ENABLED
               value: "true"
+            - name: DD_TAGS
+              value: "env:dev,service:api-front"
             - name: DD_LOGS_INJECTION
               value: "true"
             - name: DD_TRACE_ENABLED

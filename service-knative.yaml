@@ -1,0 +1,51 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: hello
+  namespace: default
+spec:
+  template:
+    metadata:
+      annotations:
+        # Enable scale-to-zero
+        autoscaling.knative.dev/min-scale: "0"
+        autoscaling.knative.dev/max-scale: "10"
+        external-dns.alpha.kubernetes.io/hostname: knative.virtualti.net
+        external-dns.alpha.kubernetes.io/target: 129.153.11.167
+    spec:
+      containers:
+      - image: gcr.io/knative-samples/helloworld-go
+        ports:
+        - containerPort: 8080
+        env:
+        - name: TARGET
+          value: "Knative"
+        # resources:
+        #   requests:
+        #     cpu: 100m
+        #     memory: 128Mi
+        #   limits:
+        #     cpu: 200m
+        #     memory: 256Mi
+---
+apiVersion: serving.knative.dev/v1beta1
+kind: DomainMapping
+metadata:
+  name: knative.virtualti.net
+  namespace: default
+spec:
+  ref:
+    apiVersion: serving.knative.dev/v1
+    kind: Service
+    name: hello
+
+---
+apiVersion: networking.internal.knative.dev/v1alpha1
+kind: ClusterDomainClaim
+metadata:
+  name: knative.virtualti.net
+spec:
+  namespace: default
+
+
+# https://oneuptime.com/blog/post/2026-02-24-how-to-use-istio-with-knative-serving/view
