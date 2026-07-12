@@ -24,7 +24,7 @@ spec:
         tags.datadoghq.com/version: "1.25.0"
         sidecar.istio.io/inject: "true"
         admission.datadoghq.com/enabled: "true"
-        admission.datadoghq.com/config.mode: "socket"
+        # admission.datadoghq.com/config.mode: "socket"
       annotations:
         admission.datadoghq.com/python-lib.version: "latest"
         ad.datadoghq.com/api-front.logs: '[{"source":"python","service":"api-front"}]'

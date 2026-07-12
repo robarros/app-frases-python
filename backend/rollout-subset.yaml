@@ -24,7 +24,7 @@ spec:
         tags.datadoghq.com/version: "1.21.0"
         sidecar.istio.io/inject: "true"
         admission.datadoghq.com/enabled: "true"
-        admission.datadoghq.com/config.mode: "socket"
+        # admission.datadoghq.com/config.mode: "socket"
       annotations:
         admission.datadoghq.com/python-lib.version: "latest"
         ad.datadoghq.com/backend.logs: '[{"source":"python","service":"backend"}]'
@@ -102,11 +102,11 @@ spec:
             name: backend-destrule
             canarySubsetName: canary
             stableSubsetName: stable
-      steps:
-      - setWeight: 33
-      - pause: {}
-      - setWeight: 66
-      - pause: {}
+      # steps:
+      # - setWeight: 33
+      # - pause: {}
+      # - setWeight: 66
+      # - pause: {}
       # - setWeight: 75
       # - pause: {}
 
