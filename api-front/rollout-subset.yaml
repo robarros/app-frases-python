@@ -102,11 +102,11 @@ spec:
             name: api-front-destrule
             canarySubsetName: canary
             stableSubsetName: stable
-      steps:
-        - setWeight: 33
-        - pause: {}
-        - setWeight: 66
-        - pause: {}
+      # steps:
+      #   - setWeight: 33
+      #   - pause: {}
+      #   - setWeight: 66
+      #   - pause: {}
         # - setWeight: 75
         # - pause: {}
 
