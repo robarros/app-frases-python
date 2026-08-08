@@ -215,30 +215,30 @@ spec:
               number: 8080
           weight: 0
 
----
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: api-front-route
-  namespace: frases
-  labels:
-    app: api-front
-spec:
-  parentRefs:
-    - group: gateway.networking.k8s.io
-      kind: Gateway
-      name: kgateway
-      namespace: kgateway-system
-  hostnames:
-    - "frases.virtualti.net"
-  rules:
-    - backendRefs:
-        - group: ""
-          kind: Service
-          name: svc-api-front
-          port: 8080
-          weight: 1
-      matches:
-        - path:
-            type: PathPrefix
-            value: /
+# ---
+# apiVersion: gateway.networking.k8s.io/v1
+# kind: HTTPRoute
+# metadata:
+#   name: api-front-route
+#   namespace: frases
+#   labels:
+#     app: api-front
+# spec:
+#   parentRefs:
+#     - group: gateway.networking.k8s.io
+#       kind: Gateway
+#       name: kgateway
+#       namespace: kgateway-system
+#   hostnames:
+#     - "frases.virtualti.net"
+#   rules:
+#     - backendRefs:
+#         - group: ""
+#           kind: Service
+#           name: svc-api-front
+#           port: 8080
+#           weight: 1
+#       matches:
+#         - path:
+#             type: PathPrefix
+#             value: /
