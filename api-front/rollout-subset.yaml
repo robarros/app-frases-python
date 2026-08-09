@@ -28,6 +28,8 @@ spec:
       annotations:
         admission.datadoghq.com/python-lib.version: "latest"
         ad.datadoghq.com/api-front.logs: '[{"source":"python","service":"api-front"}]'
+        ad.datadoghq.com/istio-proxy.check_names: '["envoy"]'
+        ad.datadoghq.com/istio-proxy.instances: '[{"openmetrics_endpoint": "http://%%host%%:15090/stats/prometheus"}]'
     spec:
       containers:
         - name: api-front
