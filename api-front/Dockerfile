@@ -15,3 +15,10 @@ COPY app.py ./
 EXPOSE 8080
 
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8080"]
+
+
+# docker buildx build --platform linux/arm64 -t robarros/api-front:v14 --push .
+
+
+# docker buildx build --platform linux/amd64,linux/arm64 -t robarros/api-front:v14 --push .
+
