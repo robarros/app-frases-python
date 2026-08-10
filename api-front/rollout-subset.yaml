@@ -28,16 +28,16 @@ spec:
       annotations:
         admission.datadoghq.com/python-lib.version: "latest"
         ad.datadoghq.com/api-front.logs: '[{"source":"python","service":"api-front"}]'
-        ad.datadoghq.com/istio-proxy.check_names: '["openmetrics"]'
-        ad.datadoghq.com/istio-proxy.instances: |
-          [
-            {
-              "openmetrics_endpoint": "http://%%host%%:15090/stats/prometheus",
-              "namespace": "istio.mesh",
-              "metrics": ["*"],
-              "send_distribution_buckets": true
-            }
-          ]
+        # ad.datadoghq.com/istio-proxy.check_names: '["openmetrics"]'
+        # ad.datadoghq.com/istio-proxy.instances: |
+        #   [
+        #     {
+        #       "openmetrics_endpoint": "http://%%host%%:15090/stats/prometheus",
+        #       "namespace": "istio.mesh",
+        #       "metrics": ["*"],
+        #       "send_distribution_buckets": true
+        #     }
+        #   ]
     spec:
       containers:
         - name: api-front
