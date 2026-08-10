@@ -41,7 +41,7 @@ spec:
     spec:
       containers:
         - name: api-front
-          image: robarros/api-front:v13
+          image: robarros/api-front:v14
           ports:
             - containerPort: 8080
           livenessProbe:
